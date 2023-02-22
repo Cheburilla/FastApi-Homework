@@ -1,4 +1,6 @@
+from datetime import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Float
+from models.schemas.operation.operation_request import OperationRequest
 from src.models.base import Base
 from sqlalchemy.orm import relationship
 
@@ -18,5 +20,3 @@ class Operation(Base):
     modified = relationship('User', backref='users')
     product = relationship('Product', backref='products')
     tank = relationship('Tank', backref='tanks')
-    
-    
