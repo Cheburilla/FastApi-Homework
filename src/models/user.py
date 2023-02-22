@@ -1,5 +1,11 @@
+from datetime import datetime, timedelta
+from typing import Optional
+from fastapi import HTTPException
+from jose import JWTError
 from sqlalchemy import Column, Integer, String, DateTime, Float
+from models.schemas.utils.jwt_token import JwtToken
 from src.models.base import Base
+from src.core.settings import settings
 
 
 class User(Base):
@@ -12,4 +18,3 @@ class User(Base):
     created_by = Column(Integer) # id пользователя, который добавил объект
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, nullable=True)
-    

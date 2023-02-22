@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from src.api.base_router import router
 
 
 app = FastAPI(
@@ -6,3 +7,5 @@ app = FastAPI(
     description='Приложение для работы с резервуарами',
     version='alpha'
 )
+
+app.include_router(router)
