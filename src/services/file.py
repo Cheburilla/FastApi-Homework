@@ -3,7 +3,7 @@ from io import StringIO
 from typing import BinaryIO
 
 
-class FilesService:
+class FileService:
     @staticmethod
     def upload(file: BinaryIO):
         reader = csv.DictReader((line.decode() for line in file))

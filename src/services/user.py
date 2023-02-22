@@ -16,9 +16,9 @@ from src.models.schemas.category.utils.jwt_token import JwtToken
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='/users/authorize')
     
 def get_current_user_id(token: str = Depends(oauth2_schema)) -> int:
-    return UsersService.verify_token(token)
+    return UserService.verify_token(token)
 
-class UsersService:
+class UserService:
     def __init__(self, session: Session = Depends(get_session)):
         self.session = session
         

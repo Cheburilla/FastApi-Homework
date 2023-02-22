@@ -1,11 +1,14 @@
 from datetime import datetime, timedelta
 from typing import Optional
+
 from fastapi import HTTPException
 from jose import JWTError
-from sqlalchemy import Column, Integer, String, DateTime, Float
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
 from models.schemas.utils.jwt_token import JwtToken
-from src.models.base import Base
 from src.core.settings import settings
+from src.models.base import Base
 
 
 class User(Base):
@@ -14,7 +17,10 @@ class User(Base):
     username = Column(String)
     password_hashed = Column(String)
     role = Column(String)
-    created_at = Column(DateTime)
-    created_by = Column(Integer) # id пользователя, который добавил объект
+    created_at = Column(DateTime) # id пользователя, который добавил объект
+    created_by = Column(Integer, ForeignKey('users.id'), index=True)
     modified_at = Column(DateTime, nullable=True)
-    modified_by = Column(Integer, nullable=True)
+    modified_by = Column(Integer, ForeignKey(
+        'users.id'), index=True, nullable=True)
+    created = relationship('User', backref='users')
+    modified = relationship('User', backref='users')
