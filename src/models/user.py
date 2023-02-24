@@ -12,15 +12,15 @@ from src.models.base import Base
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'Users'
+    __table_args__ = {'extend_existing': True}
     id = Column(Integer, primary_key=True)
     username = Column(String)
-    password_hashed = Column(String)
+    password_hash = Column(String)
     role = Column(String)
     created_at = Column(DateTime)  # id пользователя, который добавил объект
-    created_by = Column(Integer, ForeignKey('users.id'), index=True)
+    created_by = Column(Integer, ForeignKey(
+        'Users.id'), index=True)
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
-        'users.id'), index=True, nullable=True)
-    created = relationship('User', backref='users')
-    modified = relationship('User', backref='users')
+        'Users.id'), index=True, nullable=True)

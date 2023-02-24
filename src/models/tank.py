@@ -5,19 +5,17 @@ from src.models.base import Base
 
 
 class Tank(Base):
-    __tablename__ = 'tanks'
+    __tablename__ = 'Tanks'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     max_capacity = Column(Float)
     current_capacity = Column(Float)
     product_id = Column(Integer, ForeignKey(
-        'products.id'), index=True)  # id продукта
+        'Products.id'), index=True)  # id продукта
     created_at = Column(DateTime)
     # id пользователя, который добавил объект
-    created_by = Column(Integer, ForeignKey('users.id'), index=True)
+    created_by = Column(Integer, ForeignKey(
+        'Users.id'), index=True)
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
-        'users.id'), index=True, nullable=True)
-    created = relationship('User', backref='users')
-    modified = relationship('User', backref='users')
-    product = relationship('Product', backref='products')
+        'Users.id'), index=True, nullable=True)

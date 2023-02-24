@@ -1,9 +1,13 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from models.schemas.user.user_request import UserRequest
-from services.user import UserService, get_current_user_id
+from models.schemas.user.user_response import UserResponse
+from models.schemas.utils.jwt_token import JwtToken
+from services.user import (UserService, get_current_user_id,
+                           get_current_user_rights)
 
 router = APIRouter(
     prefix='/users',
@@ -11,17 +15,17 @@ router = APIRouter(
 )
 
 
-@router.get('/all', response_model=List[UserResponse], name='Получить все категории')
-def get(user_service: UserService = Depends(), user_id: int = Depends(get_current_user_id)):
+@router.get('/all', response_model=List[UserResponse], name='Получить всех пользователей')
+def get(user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
     """
-    Получить все категории. Более подробное описание.
+    Получить всех пользователей. Более подробное описание.
     """
-    print(user_id)
+    print(admin_id)
     return user_service.all()
 
 
-@router.get('/get/{user_id}', response_model=UserResponse, name='Получить одну категорию')
-def get(user_id: int, user_service: UserService = Depends()):
+@router.get('/get/{user_id}', response_model=UserResponse, name='Получить одного пользователя')
+def get(user_id: int, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
     return get_with_check(user_id, user_service)
 
 
@@ -29,37 +33,37 @@ def get_with_check(user_id: int, user_service: UserService):
     result = user_service.get(user_id)
     if not result:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Категория не найдена")
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
     return result
 
 
-@router.post('/', response_model=UserResponse, status_code=status.HTTP_201_CREATED, name='Добавить категорию')
-def add(user_schema: UserRequest, user_service: UserService = Depends()):
+@router.post('/', response_model=UserResponse, status_code=status.HTTP_201_CREATED, name='Добавить пользователя')
+def add(user_schema: UserRequest, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
     return user_service.add(user_schema)
 
 
-@router.put('/{user_id}', response_model=UserResponse, name='Обновить информацию о категории')
-def put(user_id: int, user_schema: UserRequest, user_service: UserService = Depends()):
+@router.put('/{user_id}', response_model=UserResponse, name='Обновить информацию о пользователе')
+def put(user_id: int, user_schema: UserRequest, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
     get_with_check(user_id, user_service)
     return user_service.add(user_schema)
 
 
-@router.delete('/{user_id}', status_code=status.HTTP_204_NO_CONTENT, name='Удалить категорию')
-def delete(user_id: int, user_service: UserService = Depends()):
+@router.delete('/{user_id}', status_code=status.HTTP_204_NO_CONTENT, name='Удалить пользователя')
+def delete(user_id: int, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
     get_with_check(user_id, user_service)
     return user_service.delete(user_id)
 
 
-@router.post('/register', status_code=status.HTTP_201_CREATED, name='Регистрация')
-def register(user_schema: UserRequest, users_service: UsersService = Depends()):
+@router.post('/register', status_code=status.HTTP_201_CREATED, name='Регистрация пользователя')
+def register(user_schema: UserRequest, users_service: UserService = Depends()):
     return users_service.register(user_schema)
 
 
-@router.post('/authorize', response_model=JwtToken, name='Авторизация')
-def authorize(auth_schema: OAuth2PasswordRequestForm = Depends(), users_service: UsersService = Depends()):
+@router.post('/authorize', response_model=JwtToken, name='Авторизация пользователя')
+def authorize(auth_schema: OAuth2PasswordRequestForm = Depends(), users_service: UserService = Depends()):
     result = users_service.authorize(
         auth_schema.username, auth_schema.password)
     if not result:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail='Не авторизован')
+            status_code=status.HTTP_401_UNAUTHORIZED, detail='Пользователь не авторизован')
     return result

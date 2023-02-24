@@ -6,6 +6,7 @@ from fastapi import Depends
 from db.db import Session, get_session
 from models.operation import Operation
 from models.schemas.operation.operation_request import OperationRequest
+from services.user import get_current_user_id
 
 
 class OperationService:
@@ -37,7 +38,7 @@ class OperationService:
     def add(self, operation_schema: OperationRequest) -> Operation:
         operation = Operation(**operation_schema.dict())
         operation.created_at = datetime.now()
-        # operation.created_by =
+        operation.created_by = get_current_user_id()
         self.session.add(operation)
         self.session.commit()
         return operation
@@ -47,7 +48,7 @@ class OperationService:
         for field, value in operation_schema:
             setattr(operation, field, value)
         operation.modified_at = datetime.now()
-        # operation.modified_by =
+        operation.modified_by = get_current_user_id()
         self.session.commit()
         return operation
 

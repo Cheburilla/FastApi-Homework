@@ -5,14 +5,13 @@ from src.models.base import Base
 
 
 class Product(Base):
-    __tablename__ = 'products'
+    __tablename__ = 'Products'
     id = Column(Integer, primary_key=True)
     name = Column(String)
     created_at = Column(DateTime)
     # id пользователя, который добавил объект
-    created_by = Column(Integer, ForeignKey('users.id'), index=True)
+    created_by = Column(Integer, ForeignKey(
+        'Users.id'), index=True)
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
-        'users.id'), index=True, nullable=True)
-    created = relationship('User', backref='users')
-    modified = relationship('User', backref='users')
+        'Users.id'), index=True, nullable=True)

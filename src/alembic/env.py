@@ -1,11 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine, engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import create_engine, engine_from_config, pool
 
 from alembic import context
 from src.core.settings import settings
-
 from src.models import base, operation, product, tank, user
 
 # this is the Alembic Config object, which provides

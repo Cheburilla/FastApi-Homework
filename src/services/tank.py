@@ -4,6 +4,7 @@ from typing import List
 from fastapi import Depends
 
 from db.db import Session, get_session
+from services.user import get_current_user_id
 from src.models.schemas.tank.tank_request import TankRequest
 from src.models.tank import Tank
 
@@ -35,9 +36,9 @@ class TankService:
         return tank
 
     def add(self, tank_schema: TankRequest) -> Tank:
-        tank = tank(**tank_schema.dict())
+        tank = Tank(**tank_schema.dict())
         tank.created_at = datetime.now()
-        # tank.created_by =
+        tank.created_by = get_current_user_id()
         self.session.add(tank)
         self.session.commit()
         return tank
@@ -47,7 +48,7 @@ class TankService:
         for field, value in tank_schema:
             setattr(tank, field, value)
         tank.modified_at = datetime.now()
-        # tank.modified_by =
+        tank.modified_by = get_current_user_id()
         self.session.commit()
         return tank
 
