@@ -7,4 +7,3 @@ class ProductResponse(BaseModel):
 
     class Config:
         orm_mode = True
-        

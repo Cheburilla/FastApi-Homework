@@ -9,7 +9,7 @@ class FileService:
         reader = csv.DictReader((line.decode() for line in file))
         for row in reader:
             print(row)
-            
+
     @staticmethod
     def download():
         output = StringIO()

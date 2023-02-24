@@ -1,16 +1,17 @@
 from datetime import datetime
 from typing import List
+
 from fastapi import Depends
 
 from db.db import Session, get_session
-from src.models.tank import Tank
 from src.models.schemas.tank.tank_request import TankRequest
+from src.models.tank import Tank
 
 
 class TankService:
     def __init__(self, session: Session = Depends(get_session)):
         self.session = session
-        
+
     def all(self) -> List[Tank]:
         tanks = (
             self.session
@@ -21,7 +22,7 @@ class TankService:
             .all()
         )
         return tanks
-    
+
     def get(self, tank_id: int) -> Tank:
         tank = (
             self.session
@@ -32,24 +33,24 @@ class TankService:
             .first()
         )
         return tank
-    
+
     def add(self, tank_schema: TankRequest) -> Tank:
         tank = tank(**tank_schema.dict())
         tank.created_at = datetime.now()
-        #tank.created_by = 
+        # tank.created_by =
         self.session.add(tank)
         self.session.commit()
         return tank
-    
+
     def update(self, tank_id: int, tank_schema: TankRequest) -> Tank:
         tank = self.get(tank_id)
         for field, value in tank_schema:
             setattr(tank, field, value)
         tank.modified_at = datetime.now()
-        #tank.modified_by = 
+        # tank.modified_by =
         self.session.commit()
         return tank
-    
+
     def delete(self, tank_id: int):
         tank = self.get(tank_id)
         self.session.delete(tank)

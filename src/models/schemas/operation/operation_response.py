@@ -1,8 +1,9 @@
 from datetime import datetime
+
 from pydantic import BaseModel
 
 
-class CategoryResponse(BaseModel):
+class OperationResponse(BaseModel):
     id: int
     mass: float
     date_start: datetime
@@ -13,6 +14,6 @@ class CategoryResponse(BaseModel):
     created_by: int
     modified_at: datetime
     modified_by: int
-    
+
     class Config:
         orm_mode = True

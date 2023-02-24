@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.core.settings import settings
 
+from src.core.settings import settings
 
 engine = create_engine(
     settings.connection_string
@@ -13,8 +13,9 @@ Session = sessionmaker(
     autoflush=False
 )
 
+
 def get_session():
-    session=Session()
+    session = Session()
     try:
         yield session
     finally:

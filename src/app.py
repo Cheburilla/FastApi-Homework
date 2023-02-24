@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from src.api.base_router import router
 
+from src.api.base_router import router
 
 app = FastAPI(
     title='Мое второе приложение FastAPI',
