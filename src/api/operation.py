@@ -24,6 +24,7 @@ def get(operations_service: OperationService = Depends(), user_id: int = Depends
 
 @router.get('/get/{operation_id}', response_model=OperationResponse, name='Получить одну операцию')
 def get(operation_id: int, operations_service: OperationService = Depends(), user_id: int = Depends(get_current_user_id)):
+    print(user_id)
     return get_with_check(operation_id, operations_service)
 
 
@@ -36,17 +37,20 @@ def get_with_check(operation_id: int, operations_service: OperationService):
 
 
 @router.post('/', response_model=OperationResponse, status_code=status.HTTP_201_CREATED, name='Добавить операцию')
-def add(operation_schema: OperationRequest, operations_service: OperationService = Depends(), user_id: int = Depends(get_current_user_id)):
-    return operations_service.add(operation_schema)
+def add(operation_schema: OperationRequest, operations_service: OperationService = Depends(), creating_id: int = Depends(get_current_user_id)):
+    print(creating_id)
+    return operations_service.add(operation_schema, creating_id)
 
 
 @router.put('/{operation_id}', response_model=OperationResponse, name='Обновить информацию о операции')
-def put(operation_id: int, operation_schema: OperationRequest, operations_service: OperationService = Depends(), user_id: int = Depends(get_current_user_id)):
+def put(operation_id: int, operation_schema: OperationRequest, operations_service: OperationService = Depends(), modifying_id: int = Depends(get_current_user_id)):
     get_with_check(operation_id, operations_service)
-    return operations_service.add(operation_schema)
+    print(modifying_id)
+    return operations_service.add(operation_schema, modifying_id)
 
 
 @router.delete('/{operation_id}', status_code=status.HTTP_204_NO_CONTENT, name='Удалить операцию')
 def delete(operation_id: int, operations_service: OperationService = Depends(), user_id: int = Depends(get_current_user_id)):
+    print(user_id)
     get_with_check(operation_id, operations_service)
     return operations_service.delete(operation_id)

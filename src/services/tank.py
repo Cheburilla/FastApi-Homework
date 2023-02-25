@@ -35,20 +35,20 @@ class TankService:
         )
         return tank
 
-    def add(self, tank_schema: TankRequest) -> Tank:
+    def add(self, tank_schema: TankRequest, creating_id: int) -> Tank:
         tank = Tank(**tank_schema.dict())
         tank.created_at = datetime.now()
-        tank.created_by = get_current_user_id()
+        tank.created_by = creating_id
         self.session.add(tank)
         self.session.commit()
         return tank
 
-    def update(self, tank_id: int, tank_schema: TankRequest) -> Tank:
+    def update(self, tank_id: int, tank_schema: TankRequest, modifying_id: int) -> Tank:
         tank = self.get(tank_id)
         for field, value in tank_schema:
             setattr(tank, field, value)
         tank.modified_at = datetime.now()
-        tank.modified_by = get_current_user_id()
+        tank.modified_by = modifying_id
         self.session.commit()
         return tank
 

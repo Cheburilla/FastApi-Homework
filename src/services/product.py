@@ -35,20 +35,20 @@ class ProductService:
         )
         return product
 
-    def add(self, product_schema: ProductRequest) -> Product:
+    def add(self, product_schema: ProductRequest, creating_id: int) -> Product:
         product = Product(**product_schema.dict())
         product.created_at = datetime.now()
-        product.created_by = get_current_user_id()
+        product.created_by = creating_id
         self.session.add(product)
         self.session.commit()
         return product
 
-    def update(self, product_id: int, product_schema: ProductRequest) -> Product:
+    def update(self, product_id: int, product_schema: ProductRequest, modifying_id: int) -> Product:
         product = self.get(product_id)
         for field, value in product_schema:
             setattr(product, field, value)
         product.modified_at = datetime.now()
-        product.modified_by = get_current_user_id()
+        product.modified_by = modifying_id
         self.session.commit()
         return product
 

@@ -36,13 +36,13 @@ class UserService:
         return pbkdf2_sha256.verify(password_text, password_hash)
 
     @staticmethod
-    def create_token(user_id: int, admin: bool = False) -> JwtToken:
+    def create_token(user_id: int, role: str) -> JwtToken:
         now = datetime.utcnow()
         payload = {
             'iat': now,
             'exp': now + timedelta(seconds=settings.jwt_expires_seconds),
             'sub': str(user_id),
-            # 'adm': admin
+            'role': role
         }
         token = jwt.encode(payload, settings.jwt_secret,
                            algorithm=settings.jwt_algorithm)
@@ -62,17 +62,18 @@ class UserService:
     def verify_access(token: str) -> Optional[int]:
         payload = jwt.decode(token, settings.jwt_secret, algorithms=[
             settings.jwt_algorithm])
-        if not payload.get('adm'):
+        if payload.get('role') != 'admin':
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
         return payload.get('sub')
 
-    def register(self, user_schema: UserRequest) -> None:
+    def register(self, user_schema: UserRequest, creator_id: int) -> None:
         user = User(
             username=user_schema.username,
             password_hash=self.hash_password(user_schema.password_text),
-            role='viewer',
-            created_at=datetime.now()
+            role=user_schema.role,
+            created_at=datetime.now(),
+            created_by=creator_id
         )
         self.session.add(user)
         self.session.commit()
@@ -90,7 +91,7 @@ class UserService:
         if not self.check_password(password_text, user.password_hash):
             return None
 
-        return self.create_token(user.id)
+        return self.create_token(user.id, user.role)
 
     def all(self) -> List[User]:
         users = (
@@ -114,20 +115,20 @@ class UserService:
         )
         return user
 
-    def add(self, user_schema: UserRequest) -> User:
+    def add(self, user_schema: UserRequest, creating_id: int) -> User:
         user = User(**user_schema.dict())
         user.created_at = datetime.now()
-        user.created_by = get_current_user_id()
+        user.created_by = creating_id
         self.session.add(user)
         self.session.commit()
         return user
 
-    def update(self, user_id: int, user_schema: UserRequest) -> User:
+    def update(self, user_id: int, user_schema: UserRequest, modifying_id: int) -> User:
         user = self.get(user_id)
         for field, value in user_schema:
             setattr(user, field, value)
         user.modified_at = datetime.now()
-        user.modified_by = get_current_user_id()
+        user.modified_by = modifying_id
         self.session.commit()
         return user
 

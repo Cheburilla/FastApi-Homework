@@ -16,9 +16,8 @@ class Operation(Base):
     date_end = Column(DateTime)
     tank_id = Column(Integer, ForeignKey('Tanks.id'), index=True)
     product_id = Column(Integer, ForeignKey(
-        'Products.id'), index=True)  # id продукта
+        'Products.id'), index=True)
     created_at = Column(DateTime)
-    # id пользователя, который добавил объект
     created_by = Column(Integer, ForeignKey(
         'Users.id'), index=True)
     modified_at = Column(DateTime, nullable=True)

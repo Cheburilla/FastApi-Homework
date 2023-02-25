@@ -9,7 +9,6 @@ class Product(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     created_at = Column(DateTime)
-    # id пользователя, который добавил объект
     created_by = Column(Integer, ForeignKey(
         'Users.id'), index=True)
     modified_at = Column(DateTime, nullable=True)

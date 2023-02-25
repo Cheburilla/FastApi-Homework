@@ -35,20 +35,20 @@ class OperationService:
         )
         return operation
 
-    def add(self, operation_schema: OperationRequest) -> Operation:
+    def add(self, operation_schema: OperationRequest, creating_id: int) -> Operation:
         operation = Operation(**operation_schema.dict())
         operation.created_at = datetime.now()
-        operation.created_by = get_current_user_id()
+        operation.created_by = creating_id
         self.session.add(operation)
         self.session.commit()
         return operation
 
-    def update(self, operation_id: int, operation_schema: OperationRequest) -> Operation:
+    def update(self, operation_id: int, operation_schema: OperationRequest, modifying_id: int) -> Operation:
         operation = self.get(operation_id)
         for field, value in operation_schema:
             setattr(operation, field, value)
         operation.modified_at = datetime.now()
-        operation.modified_by = get_current_user_id()
+        operation.modified_by = modifying_id
         self.session.commit()
         return operation
 

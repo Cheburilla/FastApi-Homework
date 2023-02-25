@@ -26,6 +26,7 @@ def get(user_service: UserService = Depends(), admin_id: int = Depends(get_curre
 
 @router.get('/get/{user_id}', response_model=UserResponse, name='Получить одного пользователя')
 def get(user_id: int, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
+    print(admin_id)
     return get_with_check(user_id, user_service)
 
 
@@ -38,24 +39,26 @@ def get_with_check(user_id: int, user_service: UserService):
 
 
 @router.post('/', response_model=UserResponse, status_code=status.HTTP_201_CREATED, name='Добавить пользователя')
-def add(user_schema: UserRequest, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
-    return user_service.add(user_schema)
+def add(user_schema: UserRequest, user_service: UserService = Depends(), creating_id: int = Depends(get_current_user_rights)):
+    return user_service.add(user_schema, creating_id)
 
 
 @router.put('/{user_id}', response_model=UserResponse, name='Обновить информацию о пользователе')
-def put(user_id: int, user_schema: UserRequest, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
+def put(user_id: int, user_schema: UserRequest, user_service: UserService = Depends(), modifying_id: int = Depends(get_current_user_rights)):
     get_with_check(user_id, user_service)
-    return user_service.add(user_schema)
+    return user_service.add(user_schema, modifying_id)
 
 
 @router.delete('/{user_id}', status_code=status.HTTP_204_NO_CONTENT, name='Удалить пользователя')
 def delete(user_id: int, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
+    print(admin_id)
     get_with_check(user_id, user_service)
     return user_service.delete(user_id)
 
 
 @router.post('/register', status_code=status.HTTP_201_CREATED, name='Регистрация пользователя')
-def register(user_schema: UserRequest, users_service: UserService = Depends()):
+def register(user_schema: UserRequest, users_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
+    print(admin_id)
     return users_service.register(user_schema)
 
 

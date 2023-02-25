@@ -24,6 +24,7 @@ def get(product_service: ProductService = Depends(), user_id: int = Depends(get_
 
 @router.get('/get/{product_id}', response_model=ProductResponse, name='Получить один продукт')
 def get(product_id: int, product_service: ProductService = Depends(), user_id: int = Depends(get_current_user_id)):
+    print(user_id)
     return get_with_check(product_id, product_service)
 
 
@@ -36,17 +37,19 @@ def get_with_check(product_id: int, product_service: ProductService):
 
 
 @router.post('/', response_model=ProductResponse, status_code=status.HTTP_201_CREATED, name='Добавить продукты')
-def add(product_schema: ProductRequest, product_service: ProductService = Depends(), user_id: int = Depends(get_current_user_id)):
-    return product_service.add(product_schema)
+def add(product_schema: ProductRequest, product_service: ProductService = Depends(), creating_id: int = Depends(get_current_user_id)):
+    print(creating_id)
+    return product_service.add(product_schema, creating_id)
 
 
 @router.put('/{product_id}', response_model=ProductResponse, name='Обновить информацию о продукте')
-def put(product_id: int, product_schema: ProductRequest, product_service: ProductService = Depends(), user_id: int = Depends(get_current_user_id)):
+def put(product_id: int, product_schema: ProductRequest, product_service: ProductService = Depends(), modifying_id: int = Depends(get_current_user_id)):
     get_with_check(product_id, product_service)
-    return product_service.add(product_schema)
+    return product_service.add(product_schema, modifying_id)
 
 
 @router.delete('/{product_id}', status_code=status.HTTP_204_NO_CONTENT, name='Удалить продукт')
 def delete(product_id: int, product_service: ProductService = Depends(), user_id: int = Depends(get_current_user_id)):
+    print(user_id)
     get_with_check(product_id, product_service)
     return product_service.delete(product_id)

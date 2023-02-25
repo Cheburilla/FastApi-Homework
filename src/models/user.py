@@ -18,9 +18,9 @@ class User(Base):
     username = Column(String)
     password_hash = Column(String)
     role = Column(String)
-    created_at = Column(DateTime)  # id пользователя, который добавил объект
+    created_at = Column(DateTime)
     created_by = Column(Integer, ForeignKey(
-        'Users.id'), index=True)
+        'Users.id'), index=True, nullable=True)
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
         'Users.id'), index=True, nullable=True)

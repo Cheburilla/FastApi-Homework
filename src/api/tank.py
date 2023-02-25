@@ -24,6 +24,7 @@ def get(tank_service: TankService = Depends(), user_id: int = Depends(get_curren
 
 @router.get('/get/{tank_id}', response_model=TankResponse, name='Получить один резервуар')
 def get(tank_id: int, tank_service: TankService = Depends(), user_id: int = Depends(get_current_user_id)):
+    print(user_id)
     return get_with_check(tank_id, tank_service)
 
 
@@ -36,17 +37,19 @@ def get_with_check(tank_id: int, tank_service: TankService):
 
 
 @router.post('/', response_model=TankResponse, status_code=status.HTTP_201_CREATED, name='Добавить резервуар')
-def add(tank_schema: TankRequest, tank_service: TankService = Depends(), user_id: int = Depends(get_current_user_id)):
-    return tank_service.add(tank_schema)
+def add(tank_schema: TankRequest, tank_service: TankService = Depends(), creating_id: int = Depends(get_current_user_id)):
+    print(creating_id)
+    return tank_service.add(tank_schema, creating_id)
 
 
 @router.put('/{tank_id}', response_model=TankResponse, name='Обновить информацию о резервуаре')
-def put(tank_id: int, tank_schema: TankRequest, tank_service: TankService = Depends(), user_id: int = Depends(get_current_user_id)):
+def put(tank_id: int, tank_schema: TankRequest, tank_service: TankService = Depends(), modifying_id: int = Depends(get_current_user_id)):
     get_with_check(tank_id, tank_service)
-    return tank_service.add(tank_schema)
+    return tank_service.add(tank_schema, modifying_id)
 
 
 @router.delete('/{tank_id}', status_code=status.HTTP_204_NO_CONTENT, name='Удалить резервуар')
 def delete(tank_id: int, tank_service: TankService = Depends(), user_id: int = Depends(get_current_user_id)):
+    print(user_id)
     get_with_check(tank_id, tank_service)
     return tank_service.delete(tank_id)
