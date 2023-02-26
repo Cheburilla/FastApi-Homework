@@ -8,8 +8,8 @@ class UserResponse(BaseModel):
     username: str
     password_hash: str
     role: str
-    created_at: datetime
-    created_by: int
+    created_at: datetime | None
+    created_by: int | None
     modified_at: datetime | None
     modified_by: int | None
 

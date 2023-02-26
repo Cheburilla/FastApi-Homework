@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from core import settings
+from core.settings import settings
 from db.db import Session
 from models.user import User
 from services.user import UserService
@@ -41,8 +41,8 @@ def admin_check() -> None:
         if not user:
             admin = User(
                 id=1,
-                username=settings.admin_login,
-                password_hashed=UserService.hash_password(
+                username=settings.admin_username,
+                password_hash=UserService.hash_password(
                     settings.admin_password),
                 role='admin'
             )

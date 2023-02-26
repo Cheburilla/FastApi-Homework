@@ -86,3 +86,14 @@ class OperationService:
         output.seek(0)
 
         return output
+
+    def find_by_tank(self, tank_id: int) -> List[Operation]:
+        operations = (
+            self.session
+                .query(Operation)
+            .filter(Operation.tank_id == tank_id)
+            .order_by(Operation.id.asc())
+            .all()
+        )
+
+        return operations

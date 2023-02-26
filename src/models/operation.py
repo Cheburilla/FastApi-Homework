@@ -24,10 +24,10 @@ class Operation(Base):
     modified_by = Column(Integer, ForeignKey(
         'Users.id'), index=True, nullable=True)
 
-    tank = relationship('Tanks', foreign_keys=[tank_id], backref='tanks')
-    product1 = relationship('Products', foreign_keys=[
+    tank = relationship('Tank', backref='tanks')
+    product1 = relationship('Product', foreign_keys=[
                             product_id], backref='products1')
-    created11 = relationship('Users', foreign_keys=[
+    created11 = relationship('src.models.user.User', foreign_keys=[
                              created_by], backref='users1.1')
-    modified12 = relationship('Users', foreign_keys=[
+    modified12 = relationship('src.models.user.User', foreign_keys=[
                               modified_by], backref='users1.2')

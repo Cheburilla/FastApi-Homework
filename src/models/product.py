@@ -15,7 +15,7 @@ class Product(Base):
     modified_by = Column(Integer, ForeignKey(
         'Users.id'), index=True, nullable=True)
 
-    created21 = relationship('Users', foreign_keys=[
+    created21 = relationship('src.models.user.User', foreign_keys=[
                              created_by], backref='users2.1')
-    modified22 = relationship('Users', foreign_keys=[
+    modified22 = relationship('src.models.user.User', foreign_keys=[
                               modified_by], backref='users2.2')

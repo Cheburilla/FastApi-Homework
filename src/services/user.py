@@ -116,9 +116,13 @@ class UserService:
         return user
 
     def add(self, user_schema: UserRequest, creating_id: int) -> User:
-        user = User(**user_schema.dict())
-        user.created_at = datetime.now()
-        user.created_by = creating_id
+        user = User(
+            username=user_schema.username,
+            password_hash=self.hash_password(user_schema.password_text),
+            role=user_schema.role,
+            created_by=creating_id,
+            created_at=datetime.now()
+        )
         self.session.add(user)
         self.session.commit()
         return user
