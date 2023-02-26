@@ -1,4 +1,6 @@
+import csv
 from datetime import datetime
+from io import StringIO
 from typing import List
 
 from fastapi import Depends
@@ -56,3 +58,31 @@ class OperationService:
         operation = self.get(operation_id)
         self.session.delete(operation)
         self.session.commit()
+
+    def download(self, tank_id: int, product_id: int, date_start: datetime, date_end: datetime):
+        operations = (
+            self.session
+                .query(Operation)
+            .filter(Operation.tank_id == tank_id,
+                    Operation.product_id == product_id,
+                    Operation.date_start >= date_start,
+                    Operation.date_end <= date_end
+                    )
+            .order_by(Operation.id.asc())
+            .all()
+        )
+
+        columns_name = Operation.__table__.columns.keys()
+
+        list = [dict([(key, row.__dict__[key]) for key in columns_name])
+                for row in operations]
+
+        output = StringIO()
+        writer = csv.DictWriter(output, fieldnames=columns_name)
+        writer.writeheader()
+
+        for row in list:
+            writer.writerow(row)
+        output.seek(0)
+
+        return output

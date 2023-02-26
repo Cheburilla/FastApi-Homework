@@ -18,3 +18,9 @@ class Tank(Base):
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
         'Users.id'), index=True, nullable=True)
+
+    product2 = relationship('Products', backref='products2')
+    created31 = relationship('Users', foreign_keys=[
+                             created_by], backref='users3.1')
+    modified32 = relationship('Users', foreign_keys=[
+                              modified_by], backref='users3.2')

@@ -14,3 +14,8 @@ class Product(Base):
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
         'Users.id'), index=True, nullable=True)
+
+    created21 = relationship('Users', foreign_keys=[
+                             created_by], backref='users2.1')
+    modified22 = relationship('Users', foreign_keys=[
+                              modified_by], backref='users2.2')

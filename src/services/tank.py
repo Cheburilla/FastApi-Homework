@@ -56,3 +56,11 @@ class TankService:
         tank = self.get(tank_id)
         self.session.delete(tank)
         self.session.commit()
+
+    def update_current_capacity(self, tank_id: int, new_capacity: float, modifying_id: int) -> Tank:
+        tank = self.get(tank_id)
+        tank.current_capacity = new_capacity
+        tank.modified_by = modifying_id
+        tank.modified_at = datetime.now()
+        self.session.commit()
+        return tank

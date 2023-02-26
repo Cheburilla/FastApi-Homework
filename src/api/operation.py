@@ -1,11 +1,15 @@
+from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 
 from models.schemas.operation.operation_request import OperationRequest
 from models.schemas.operation.operation_response import OperationResponse
 from services.operation import OperationService
+from services.tank import TankService
 from services.user import get_current_user_id
+from src.api.utils.get_with_check import get_with_check
 
 router = APIRouter(
     prefix='/operations',
@@ -15,9 +19,6 @@ router = APIRouter(
 
 @router.get('/all', response_model=List[OperationResponse], name='Получить все операции')
 def get(operations_service: OperationService = Depends(), user_id: int = Depends(get_current_user_id)):
-    """
-    Получить все операции. Более подробное описание.
-    """
     print(user_id)
     return operations_service.all()
 
@@ -26,14 +27,6 @@ def get(operations_service: OperationService = Depends(), user_id: int = Depends
 def get(operation_id: int, operations_service: OperationService = Depends(), user_id: int = Depends(get_current_user_id)):
     print(user_id)
     return get_with_check(operation_id, operations_service)
-
-
-def get_with_check(operation_id: int, operations_service: OperationService):
-    result = operations_service.get(operation_id)
-    if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Операция не найдена")
-    return result
 
 
 @router.post('/', response_model=OperationResponse, status_code=status.HTTP_201_CREATED, name='Добавить операцию')
@@ -54,3 +47,22 @@ def delete(operation_id: int, operations_service: OperationService = Depends(), 
     print(user_id)
     get_with_check(operation_id, operations_service)
     return operations_service.delete(operation_id)
+
+
+@router.get('/get_by_tank_id/{tank_id}', response_model=list[OperationResponse], name='Получить все операции по конкретному резервуару')
+def get_by_tank(tank_id: int, operations_service: OperationService = Depends(), tank_service: TankService = Depends()):
+    get_with_check(tank_id, tank_service)
+    return operations_service.find_by_tank(tank_id)
+
+
+@router.get('/download', response_model=List[OperationResponse], name='Формирование отчета')
+def report(tank_id: int, product_id: int, date_start: datetime, date_end: datetime, operations_service: OperationService = Depends()):
+    """
+    Формирование отчета в формате csv
+    """
+    report = operations_service.download(
+        tank_id, product_id, date_start, date_end)
+    return StreamingResponse(report, media_type='text/csv',
+                             headers={
+                                 'Content-Disposition': 'attachment; filename=report.csv'
+                             })

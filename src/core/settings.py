@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     jwt_secret: str
     jwt_algorithm: str
     jwt_expires_seconds: int
+    admin_username: str
+    admin_password: str
 
 
 settings = Settings(

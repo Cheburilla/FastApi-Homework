@@ -23,5 +23,11 @@ class Operation(Base):
     modified_at = Column(DateTime, nullable=True)
     modified_by = Column(Integer, ForeignKey(
         'Users.id'), index=True, nullable=True)
-    product = relationship('Product', backref='Products')
-    tank = relationship('Tank', backref='Tanks')
+
+    tank = relationship('Tanks', foreign_keys=[tank_id], backref='tanks')
+    product1 = relationship('Products', foreign_keys=[
+                            product_id], backref='products1')
+    created11 = relationship('Users', foreign_keys=[
+                             created_by], backref='users1.1')
+    modified12 = relationship('Users', foreign_keys=[
+                              modified_by], backref='users1.2')

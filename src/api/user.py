@@ -8,6 +8,7 @@ from models.schemas.user.user_response import UserResponse
 from models.schemas.utils.jwt_token import JwtToken
 from services.user import (UserService, get_current_user_id,
                            get_current_user_rights)
+from src.api.utils.get_with_check import get_with_check
 
 router = APIRouter(
     prefix='/users',
@@ -17,9 +18,6 @@ router = APIRouter(
 
 @router.get('/all', response_model=List[UserResponse], name='Получить всех пользователей')
 def get(user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
-    """
-    Получить всех пользователей. Более подробное описание.
-    """
     print(admin_id)
     return user_service.all()
 
@@ -28,14 +26,6 @@ def get(user_service: UserService = Depends(), admin_id: int = Depends(get_curre
 def get(user_id: int, user_service: UserService = Depends(), admin_id: int = Depends(get_current_user_rights)):
     print(admin_id)
     return get_with_check(user_id, user_service)
-
-
-def get_with_check(user_id: int, user_service: UserService):
-    result = user_service.get(user_id)
-    if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден")
-    return result
 
 
 @router.post('/', response_model=UserResponse, status_code=status.HTTP_201_CREATED, name='Добавить пользователя')
